@@ -2,21 +2,19 @@
 	<div class="partyName"><p>{{game.name}}<p></div>
 	<div class="gameArea">
 		<div class="adversaries">
-			<span class="adversary" ng-repeat="player in game.players | filter:adversaryFilter">
-				<img class="playerAvatar" ng-src="/images/player.png" alt="{{player.name}}" width="100" height="100"/>
-				<p class="playerName">{{player.name}}</p>
-				<p class="wordPlayed">{{player.wordPlayed}}</p> 
-			</span>
-		</div>
-		<div class="deck">
+			<p class="playerName">{{game.player2.name}}</p>
+			<img class="playerAvatar" ng-src="/images/player.png" width="100" height="100"/> 
+			<div>{{game.player2.action}}</div>
 		</div>
 		<div class="currentPlayer"> 
-			<img class="playerAvatar" ng-src="/images/player.png" alt="{{game.currentPlayer.name}}" width="100" height="100"/>
-			<p class="playerName">{{game.currentPlayer.name}}</p>
-			<div class="form-group">
-		  		<label for="usr">Mot:</label>
-		  		<input type="text" class="form-control" id="wordPlayed">
-		  		<button type="submit" class="btn btn-default">Jouer</button>
+			<div class="actions">
+				<span ng-repeat="action in game.actions">
+					<button type="submit" class="btn btn-default" ng-click="game.player1.play(action.id)">{{action.name}}</button>
+				</span>
+			</div>
+			<div class="playerDisplay">
+				<img class="playerAvatar" ng-src="/images/player.png" width="100" height="100"/> 
+				<p class="playerName">{{game.player1.name}}</p>
 			</div>
 		</div>
 	</div>

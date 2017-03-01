@@ -8,7 +8,7 @@
  * Factory in the ticTacBoomFrontApp.
  */
 angular.module('ticTacBoomFrontApp')
-  .factory('Player', function () {
+  .factory('Player', function (socket) {
     function Player(playerData) {
       if(playerData) {
         this.setData(playerData);
@@ -20,8 +20,8 @@ angular.module('ticTacBoomFrontApp')
         angular.extend(this, playerData);
       },
 
-      addCard: function() {
-
+      play: function(cardId) {
+        socket.emit('message', cardId);
       }
     };    
 

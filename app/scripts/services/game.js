@@ -21,24 +21,18 @@ angular.module('ticTacBoomFrontApp')
         angular.extend(this, gameData);
       },
 
-      setCurrentPlayer: function(player) {
-        this.addPlayer(player);
-        this.currentPlayer = player;
-      },
-
-      addPlayer: function(p) {
+      setCurrentPlayer: function(p) {
         if(!(p instanceof Player)) {
           p = new Player(p);
         }
-        this.players.push(p);
+        this.player1 = p;
       },
 
-      removePlayer: function(playerData) {
-        var removeIndex = this.players.map(function(item) { return item.id; })
-          .indexOf(playerData.id);
-        if(removeIndex >= 0) {
-          this.players.splice(removeIndex, 1);
+      setAdversary: function(p) {
+        if(!(p instanceof Player)) {
+          p = new Player(p);
         }
+        this.player2 = p;
       },
 
       startGame: function() {
