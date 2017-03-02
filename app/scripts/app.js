@@ -31,12 +31,12 @@ angular
         controller: 'AboutCtrl',
         controllerAs: 'about'
       })
-      .when('/', {
+      .when('/play/:gameId', {
         templateUrl: 'views/play.html',
         controller: 'PlayCtrl',
         controllerAs: 'play'
       })
       .otherwise({
-        redirectTo: '/'
+        redirectTo: '/play/0'
       });
   });

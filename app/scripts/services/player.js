@@ -13,6 +13,9 @@ angular.module('ticTacBoomFrontApp')
       if(playerData) {
         this.setData(playerData);
       }
+      socket.on('game', function(message) {
+        alert('gameId: ' + message);
+      });
     }
 
     Player.prototype = {

@@ -12,6 +12,7 @@
   "unused": true,
   "globals": {
     "angular": false,
-    "io": false
+    "io": false,
+    "alert": false
   }
 }
