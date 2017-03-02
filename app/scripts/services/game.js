@@ -26,6 +26,7 @@ angular.module('ticTacBoomFrontApp')
           p = new Player(p);
         }
         this.player1 = p;
+        this.player1.init();
       },
 
       setAdversary: function(p) {

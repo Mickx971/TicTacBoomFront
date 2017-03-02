@@ -1,5 +1,4 @@
 const HashMap = require('hashmap');
-const Player  = require('./player');
 
 function Game(id) {
 	this.id = id;
@@ -17,14 +16,22 @@ Game.prototype = {
 		return this.player1 != null && this.player2 != null;
 	},
 
-	addPlayer(playerId) {
+	addPlayer(player) {
+		
+		player.reset();
+
 		if(!this.player1) {
-			this.player1 = new Player(playerId);
+			this.player1 = player;
 		}
-		else if(!this.player2) {
-			this.player2 = new Player(playerId);	
+		else if(this.player1.id != player.id && !this.player2) {
+			this.player2 = player;	
 		}
-		else console.log('Error: attempt to add more than 2 players');
+		else {
+			if(this.player1.id == player.id)
+				console.log('Error: attempt to add the same user');
+			else
+				console.log('Error: attempt to add more than 2 players');
+		}
 	},
 
 	play: function(playerId, actionId, callback) {

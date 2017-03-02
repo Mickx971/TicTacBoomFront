@@ -1,57 +1,69 @@
-var app 	= require('express')(),
-	server  = require('http').createServer(app),
-	io 		= require('socket.io')(server),
-	session = require('express-session')({
-		secret: 'MY-SECRET-TO-CHANGE',
-		resave: true,
-		saveUninitialized: true
-	}),
-sharedsession = require('express-socket.io-session');
+const Session       = require('express-session');
+const MemoryStore   = require('session-memory-store')(Session);
+const Utils         = require('./utils');
 
-var gamePool = new (require('./gamePool'))();
+
+var app     = require('express')();
+var server  = require('http').createServer(app);
+var io      = require('socket.io')(server);
+var session = Session({
+        secret: 'MY-SECRET-TO-CHANGE',         
+        resave: true,
+        saveUninitialized: true
+    });
 
 app.use(session)
 
 // Routes
 
 .get('/play/:gameId', function(req,res) {
-	if(req.session.id)
-		console.log(req.session.id);
 	res.end();
 });
 
-// Share session with io sockets
-io.of('/play').use(sharedsession(session, { autoSave: true }));
 
-io.of('/play').on('connection', function(socket) {
-    // Accept a login event with user's data
-    // socket.on('login', function(userdata) {
-    // 	socket.handshake.session.userdata = userdata;
-    // 	socket.handshake.session.save();
+var gamePool   = new (require('./gamePool'))();
+var playerPool = new (require('./playerPool'))();
+
+io.on('connection', function(socket) {
+
+    socket.on('play', function(userData) {
+        var player;
+        if(!userData || !(player = playerPool.getPlayer(userData.id))) {
+            console.log('user created');
+            player = playerPool.createPlayer();
+        }
+        console.log('playerId: ' + player.id);
+        socket.emit('setPlayerId', player.id);        
+    });
+
+    // socket.on('searchGame', function(userData) {
+    //     userData
     // });
 
     // socket.on('logout', function(userdata) {
-    // 	if (socket.handshake.session.userdata) {
-    // 		delete socket.handshake.session.userdata;
-    // 		socket.handshake.session.save();
-    // 	}
+    //  if (socket.handshake.session.userdata) {
+    //      delete socket.handshake.session.userdata;
+    //      socket.handshake.session.save();
+    //  }
     // });
 
-    var game = gamePool.getFreeGame();
-    if(!game) {
-        game = gamePool.createGame();
-    }
 
-    game.addPlayer(socket.handshake.session.id);
 
-    if(game.ready()) {
-        socket.emit('');
-    }
+    // var userId = Utils.Guid();
 
-    console.log('User id: ' + socket.handshake.session.id);
-    console.log('Game id: ' + game.id + '\n');
+    // var game = gamePool.getFreeGame();
+    // if(!game) {
+    //     game = gamePool.createGame();
+    // }
+
+    // game.addPlayer(userId);
+
+    // if(game.ready()) {
+    //     socket.emit('ready');
+    // }
 });
 
+
 server.listen(3000, function () {
-	console.log('Listening 3000')
+    console.log('Listening 3000');
 });

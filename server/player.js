@@ -1,11 +1,16 @@
 function Player(id) {
 	this.id = id;
-	this.life = 10;
-	this.bullet = 1;
-	this.armor = 0;
+	this.reset();
 }
 
 Player.prototype = {
+	
+	reset: function() {
+		this.life = 10;
+		this.bullet = 1;
+		this.armor = 0;
+	},
+
 	isDead: function() {
 		if(this.life <= 0)
 			return true;
@@ -68,4 +73,4 @@ Player.prototype = {
 	}
 }
 
-exports = Player;
+module.exports = Player;
