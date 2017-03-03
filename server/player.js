@@ -1,10 +1,19 @@
-function Player(id) {
+function Player(id, socket) {
 	this.id = id;
+	this.socket = socket;
 	this.reset();
 }
 
 Player.prototype = {
-	
+
+	setSocket: function(socket) {
+		this.socket = socket;
+	},
+
+	getSocket: function() {
+		return this.socket;
+	},
+
 	reset: function() {
 		this.life = 10;
 		this.bullet = 1;

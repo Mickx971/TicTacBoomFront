@@ -26,44 +26,37 @@ var playerPool = new (require('./playerPool'))();
 
 io.on('connection', function(socket) {
 
-    socket.on('play', function(userData) {
-        var player;
-        if(!userData || !(player = playerPool.getPlayer(userData.id))) {
-            console.log('user created');
-            player = playerPool.createPlayer();
+    var execute = function(userData, callback) {
+        userData = userData || {};
+        var player = playerPool.getPlayer(userData.id);
+        if(player) {
+            player.setSocket(socket);
+            callback(player);
         }
+        else console.log('Unknown user id: ' + userData.id);
+    };
+
+    socket.on('play', function(userData) {
+        userData = userData || {};
+        var player = playerPool.getOrCreatePlayer(userData.id, socket);
         console.log('playerId: ' + player.id);
         socket.emit('setPlayerId', player.id);        
     });
 
-    // socket.on('searchGame', function(userData) {
-    //     userData
-    // });
-
-    // socket.on('logout', function(userdata) {
-    //  if (socket.handshake.session.userdata) {
-    //      delete socket.handshake.session.userdata;
-    //      socket.handshake.session.save();
-    //  }
-    // });
-
-
-
-    // var userId = Utils.Guid();
-
-    // var game = gamePool.getFreeGame();
-    // if(!game) {
-    //     game = gamePool.createGame();
-    // }
-
-    // game.addPlayer(userId);
-
-    // if(game.ready()) {
-    //     socket.emit('ready');
-    // }
+    socket.on('searchGame', function(userData) {
+        console.log('searchGame');
+        execute(userData, function(player) {
+            var game;
+            if(!(game = gamePool.getGame(userData.gameId))) {
+                game = gamePool.getFreeGame();
+            }
+            game.addPlayer(player);
+            console.log('gameSent: ' + game.id);
+        });
+    });
 });
 
 
 server.listen(3000, function () {
-    console.log('Listening 3000');
+    console.log('Listening on port 3000\n\n\n');
 });

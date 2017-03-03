@@ -8,32 +8,29 @@
  * Factory in the ticTacBoomFrontApp.
  */
 angular.module('ticTacBoomFrontApp')
-  .factory('Game', function (Player) {
-    function Game(gameData) {
-        if (gameData) {
-            this.setData(gameData);
-        }
+  .factory('Game', function (Player, $cookies, socket) {
+    function Game() {
+        this.init();
     }
 
     Game.prototype = {
-      
-      setData: function(gameData) {
-        angular.extend(this, gameData);
-      },
 
-      setCurrentPlayer: function(p) {
-        if(!(p instanceof Player)) {
-          p = new Player(p);
-        }
-        this.player1 = p;
-        this.player1.init();
-      },
+      init: function() {
+        
+        this.player1 = new Player();
+        
+        this.player1.init(function() {
+          socket.sendMessage('searchGame', {gameId: $cookies.get('gameId')});
+        });
 
-      setAdversary: function(p) {
-        if(!(p instanceof Player)) {
-          p = new Player(p);
-        }
-        this.player2 = p;
+        var game = this;
+
+        socket.on('ready', function(gameData) {
+          game.id = gameData.gameId;
+          game.actions = gameData.actions;
+          game.player2 = new Player(gameData.adversary);
+          $cookies.put('gameId', game.id);
+        });
       },
 
       startGame: function() {

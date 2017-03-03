@@ -21,25 +21,22 @@
  			angular.extend(this, playerData);
  		},
 
- 		init: function() {
+ 		init: function(callback) {
+
+ 			var player = this;
 
  			socket.on('setPlayerId', function(id) {
+ 				console.log('setPlayerId: ' + id);
 				$cookies.put('playerId', id);
+				player.id = id;
+				callback();
 		    });
 
- 			this.sendMessage('play');
+ 			socket.sendMessage('play');
  		},
 
  		play: function() {
  			
- 		},
-
- 		sendMessage: function(messageType, message) {
- 			if(!message) {
- 				message = {};
- 			}
- 			message.id = $cookies.get('playerId');
- 			socket.emit(messageType, message);
  		}
  	};    
 

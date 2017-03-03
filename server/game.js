@@ -17,21 +17,48 @@ Game.prototype = {
 	},
 
 	addPlayer(player) {
-		
-		player.reset();
 
-		if(!this.player1) {
-			this.player1 = player;
+		if(!this.player1 || !this.player2) {
+			
+			player.reset();
+
+			if(!this.player1)
+				this.player1 = player;
+			else if(this.player1.id != player.id) {
+				this.player2 = player;
+			}
 		}
-		else if(this.player1.id != player.id && !this.player2) {
-			this.player2 = player;	
-		}
-		else {
-			if(this.player1.id == player.id)
-				console.log('Error: attempt to add the same user');
-			else
-				console.log('Error: attempt to add more than 2 players');
-		}
+
+		if(this.ready()) {
+			console.log('ready');
+			this.notifyReady();
+		}	
+	},
+
+	notifyReady: function() {
+		this._notifyReady(this.player1, this.player2);
+		this._notifyReady(this.player2, this.player1);
+	},
+
+	_notifyReady: function(p1,p2) {
+		p1.getSocket().emit('ready', { 
+			gameId: this.id,
+
+			adversary: {
+				id: p2.id,		
+				life: p2.life,
+				bullet: p2.bullet,
+				armor: p2.armor
+			},
+			 
+			actions: [	
+				{id: 0, name: 'Recharger', cost: -1},
+		 		{id: 1, name: 'Tirer', cost: 1},
+		 		{id: 2, name: 'Se proteger', cost: 0},
+		 		{id: 3, name: 'Super recharge', cost: -3},
+		 		{id: 4, name: 'Super tir', cost: 5}
+	 		]
+	 	});
 	},
 
 	play: function(playerId, actionId, callback) {

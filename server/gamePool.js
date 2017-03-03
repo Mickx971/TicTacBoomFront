@@ -20,7 +20,7 @@ GamePool.prototype = {
 		    if(!game.ready())
 		    	return game;
 		}
-		return false;
+		return this.createGame();
 	},
 
 	finishGame: function(gameId) {
