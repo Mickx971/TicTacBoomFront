@@ -12,7 +12,8 @@ Player.prototype = {
 			id: this.id,		
 			life: this.life,
 			bullet: this.bullet,
-			armor: this.armor
+			armor: this.armor,
+			actionPlayed: this.action
 		};
 	},
 
@@ -37,8 +38,10 @@ Player.prototype = {
 	},
 
 	setAction: function(action) {
-		if(this.canPayAction())
+		if(this.canPayAction(action)) {
 			this.action = action;
+			return true;
+		}
 		return false;
 	},
 
@@ -51,11 +54,12 @@ Player.prototype = {
 	},
 
 	setArmor: function() {
-		this.armor = action.nb;
+		this.armor = this.action.armor;
 	},
 
-	resetArmor: function() {
+	onRoundEnded: function() {
 		this.armor = 0;
+		this.action = undefined;
 	},
 
 	haveArmor: function() {
@@ -63,7 +67,7 @@ Player.prototype = {
 	},
 
 	payAction: function() {
-		this.bullet -= action.cost;
+		this.bullet -= this.action.cost;
 	},
 
 	canPayAction: function(action) {
@@ -77,18 +81,18 @@ Player.prototype = {
 	},
 
 	selfDamage: function() {
-		this.life -= action.selfDamage;
+		this.life -= this.action.selfDamage;
 	},
 
 	addDamage: function(damage) {
-		this.life += damage;
+		this.life -= damage;
 	},
 
 	attack: function(player) {
 		if(player.haveArmor())
-			player.addDamage(action.damageWhenProtected);
+			player.addDamage(this.action.damageWhenProtected);
 		else
-			player.addDamage(action.damage);
+			player.addDamage(this.action.damage);
 	}
 }
 

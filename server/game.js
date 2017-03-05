@@ -3,11 +3,11 @@ const HashMap = require('hashmap');
 function Game(id) {
 	this.id = id;
 	this.actions = new HashMap();
-	this.actions.set(0, {id: 0, name: 'charge', 		cost: -1, selfDamage: 0, damage: 0, armor: 0, damageWhenProtected: 0});
-	this.actions.set(1, {id: 1, name: 'defense', 		cost:  0, selfDamage: 0, damage: 0, armor: 1, damageWhenProtected: 0});
-	this.actions.set(2, {id: 2, name: 'shot', 			cost:  1, selfDamage: 0, damage: 1, armor: 0, damageWhenProtected: 0});
-	this.actions.set(3, {id: 3, name: 'super charge', 	cost: -3, selfDamage: 1, damage: 0, armor: 0, damageWhenProtected: 0});
-	this.actions.set(4, {id: 4, name: 'super shot', 	cost:  6, selfDamage: 0, damage: 4, armor: 0, damageWhenProtected: 1});
+	this.actions.set(0, {id: 0, name: 'Recharger', 		cost: -1, selfDamage: 0, damage: 0, armor: 0, damageWhenProtected: 0});
+	this.actions.set(1, {id: 1, name: 'Tirer', 			cost:  1, selfDamage: 0, damage: 1, armor: 0, damageWhenProtected: 0});
+	this.actions.set(2, {id: 2, name: 'Se proteger', 	cost:  0, selfDamage: 0, damage: 0, armor: 1, damageWhenProtected: 0});
+	this.actions.set(3, {id: 3, name: 'Super recharge', cost: -3, selfDamage: 1, damage: 0, armor: 0, damageWhenProtected: 0});
+	this.actions.set(4, {id: 4, name: 'Super tir', 		cost:  6, selfDamage: 0, damage: 4, armor: 0, damageWhenProtected: 1});
 }
 
 Game.prototype = {
@@ -56,10 +56,17 @@ Game.prototype = {
 	 	});
 	},
 
-	refresh: function(player) {
-		this.sendMessage(player, 'refresh', {
+	pushRound: function() {
+		this.refresh(this.player1, 'round');
+		this.refresh(this.player2, 'round');
+	},
+
+	refresh: function(player, messageType) {
+		messageType = messageType || 'refresh';
+		var adversary = this.getOther(player);
+		this.sendMessage(player, messageType, {
 			gameId: this.id,
-			adversary: this.getOther(player).getData(),
+			adversary: adversary ? adversary.getData() : undefined,
 			player: player.getData(),
 			actions: this.getActions()
 		});
@@ -79,13 +86,14 @@ Game.prototype = {
 	play: function(player, actionId, callback) {
 
 		if(!player.setAction(this.actions.get(actionId))) {
-			console.log('Error: player ' + playerId + ' can not pay action: ' + actionId);
+			console.log('Error: player ' + player.id + ' can not pay action: ' + actionId);
 			console.log('Have: ' + player.getNbBullet() + ' and cost: ' + this.actions.get(actionId).cost);
 		}
 
 		if(this.player1.havePlayed() && this.player2.havePlayed()) {
-			doRound(callback);
-		} 
+			console.log('doRound');
+			this.doRound(callback);
+		} else console.log('not doRound');
 	},
 
 	doRound: function(callback) {
@@ -95,24 +103,37 @@ Game.prototype = {
 		this.player2.setArmor();
 		this.player1.selfDamage();
 		this.player2.selfDamage();
-		this.player1.attack(player2);
-		this.player2.attack(player1);
-		this.player1.resetArmor();
-		this.player2.resetArmor();
+		this.player1.attack(this.player2);
+		this.player2.attack(this.player1);
 
-		if(this.player1.isDead() || this.player2.isDead()) {
+		this.pushRound();
 
+		this.player1.onRoundEnded();
+		this.player2.onRoundEnded();
+
+		if(this.player1.isDead() || this.player2.isDead())
+			this.onGameEnded(callback);
+	},
+
+	onGameEnded: function(callback) {
+		this.score1 = { life: this.player1.life, bullet: this.player1.bullet };
+		this.score2 = { life: this.player2.life, bullet: this.player2.bullet };
+
+		this.player1.reset();
+		this.player2.reset();
+
+		this.sendMessage(this.player1, 'end', { gameId: this.id });
+		this.sendMessage(this.player2, 'end', { gameId: this.id });
+
+		if(!this.player1.isDead() || !this.player2.isDead()) {
+			var winner = this.player1.isDead() ? this.player2 : this.player1;
+			callback(this, winner);
 		}
+		else callback(this);
 	},
 
 	getActions: function() {
-		return [	
-			{id: 0, name: 'Recharger', cost: -1},
-	 		{id: 1, name: 'Tirer', cost: 1},
-	 		{id: 2, name: 'Se proteger', cost: 0},
-	 		{id: 3, name: 'Super recharge', cost: -3},
-	 		{id: 4, name: 'Super tir', cost: 5}
-		];
+		return this.actions.values();
 	},
 
 	getOther: function(player) {

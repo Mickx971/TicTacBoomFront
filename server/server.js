@@ -43,12 +43,10 @@ io.on('connection', function(socket) {
     socket.on('play', function(userData) {
         userData = userData || {};
         var player = playerPool.getOrCreatePlayer(userData.id, socket);
-        console.log('playerId: ' + player.id);
         socket.emit('setPlayerId', player.id);        
     });
 
     socket.on('searchGame', function(userData) {
-        console.log('searchGame');
         execute(userData, function(player) {
             var game;
             
@@ -60,15 +58,32 @@ io.on('connection', function(socket) {
                 
                 game.addPlayer(player);
 
-                if(game.isReady())
+                console.log('game joined: ' + game.id);
+
+                if(game.isReady()) {
+                    console.log('ready');
                     game.notifyReady();
+                } else console.log('not ready');
             } 
             else { 
-                console.log('refresh');
                 game.refresh(player);
             }
-            
-            console.log('gameSent: ' + game.id);
+        });
+    });
+
+    socket.on('action', function(userData) {
+        execute(userData, function(player) {
+            console.log('Action: ' + userData.actionId);
+            console.log('Player: ' + player.id);
+            console.log('Game: ' + userData.gameId);
+            console.log();
+
+            var game = gamePool.getGame(userData.gameId);
+            if(game) {
+                game.play(player, userData.actionId, function(game, winner) {
+                    gamePool.onGameFinished(game, winner);
+                });
+            }
         });
     });
 });

@@ -25,6 +25,7 @@
  			this.life = data.life;
 			this.bullet = data.bullet;
 			this.armor = data.armor;
+			this.actionPlayed = data.actionPlayed;
  		},
 
  		init: function(callback) {
@@ -41,8 +42,8 @@
  			socket.sendMessage('play');
  		},
 
- 		play: function() {
- 			
+ 		play: function(action) {
+ 			socket.sendMessage('action', { gameId: this.game.id, actionId: action });
  		}
  	};    
 

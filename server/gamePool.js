@@ -23,8 +23,13 @@ GamePool.prototype = {
 		return this.createGame();
 	},
 
-	finishGame: function(gameId) {
-		this.games.remove(gameId);
+	saveGame: function(game, winner) {
+		/* do save */
+	},
+
+	onGameFinished: function(game, winner) {
+		this.saveGame(game, winner);
+		this.games.remove(game.id);
 	},
 
 	getGame: function(gameId) {

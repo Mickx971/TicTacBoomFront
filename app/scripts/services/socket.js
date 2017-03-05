@@ -16,7 +16,6 @@
 			message = {};
 		}
 		message.id = $cookies.get('playerId');
-		console.log('sendId: ' + message.id);
 		socket.emit(messageType, message);
 	};
 	return socket;
