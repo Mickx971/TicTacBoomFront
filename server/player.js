@@ -1,17 +1,27 @@
+
 function Player(id, socket) {
 	this.id = id;
-	this.socket = socket;
+	this.sockets = new Set();
 	this.reset();
 }
 
 Player.prototype = {
 
-	setSocket: function(socket) {
-		this.socket = socket;
+	getData: function() {
+		return {
+			id: this.id,		
+			life: this.life,
+			bullet: this.bullet,
+			armor: this.armor
+		};
 	},
 
-	getSocket: function() {
-		return this.socket;
+	addSocket: function(socket) {
+		this.sockets.add(socket);
+	},
+
+	removeSocket: function(socket) {
+		this.sockets.delete(socket);
 	},
 
 	reset: function() {

@@ -7,44 +7,63 @@
  * # Game
  * Factory in the ticTacBoomFrontApp.
  */
-angular.module('ticTacBoomFrontApp')
-  .factory('Game', function (Player, $cookies, socket) {
-    function Game() {
-        this.init();
-    }
+ angular.module('ticTacBoomFrontApp')
+ .factory('Game', function (Player, $cookies, socket) {
+ 	function Game() {
+ 		this.init();
+ 	}
 
-    Game.prototype = {
+ 	Game.prototype = {
 
-      init: function() {
-        
-        this.player1 = new Player();
-        
-        this.player1.init(function() {
-          socket.sendMessage('searchGame', {gameId: $cookies.get('gameId')});
-        });
+ 		init: function() {
 
-        var game = this;
+ 			this.player1 = new Player();
 
-        socket.on('ready', function(gameData) {
-          game.id = gameData.gameId;
-          game.actions = gameData.actions;
-          game.player2 = new Player(gameData.adversary);
-          $cookies.put('gameId', game.id);
-        });
-      },
+ 			this.player1.init(function() {
+ 				socket.sendMessage('searchGame', { gameId: $cookies.get('gameId') });
+ 			});
 
-      startGame: function() {
+ 			var game = this;
 
-      },
+ 			var doRefresh = function(gameData) {
+ 				if(game.id === gameData.id) {
 
-      closeGame: function() {
+ 					game.actions = gameData.actions;
 
-      },
-      
-      takeCard: function() {
+ 					if(!game.adversary) {
+ 						game.adversary = new Player(gameData.adversary);
+ 					}
+ 					else {
+ 						game.adversary.refresh(gameData.adversary);
+ 					}
 
-      }
-    };
+ 					game.player1.refresh(gameData.player);
+ 				}
+ 			};
 
-    return Game;
-  });
+ 			socket.on('gameJoined', function(gameData) {
+ 				game.id = gameData.gameId;
+ 				game.actions = gameData.actions;
+ 				game.player1.refresh(gameData.player);
+ 				$cookies.put('gameId', game.id);
+ 			});
+
+ 			socket.on('ready', doRefresh);
+ 			socket.on('refresh', doRefresh);
+ 		},
+
+ 		startGame: function() {
+
+ 		},
+
+ 		closeGame: function() {
+
+ 		},
+
+ 		takeCard: function() {
+
+ 		}
+ 	};
+
+ 	return Game;
+ });

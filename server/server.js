@@ -30,11 +30,15 @@ io.on('connection', function(socket) {
         userData = userData || {};
         var player = playerPool.getPlayer(userData.id);
         if(player) {
-            player.setSocket(socket);
+            playerPool.addPlayerSocket(player, socket);
             callback(player);
         }
         else console.log('Unknown user id: ' + userData.id);
     };
+
+    socket.on('disconnect', function() {
+        playerPool.removeSocket(socket);
+    });
 
     socket.on('play', function(userData) {
         userData = userData || {};
@@ -47,10 +51,23 @@ io.on('connection', function(socket) {
         console.log('searchGame');
         execute(userData, function(player) {
             var game;
+            
             if(!(game = gamePool.getGame(userData.gameId))) {
                 game = gamePool.getFreeGame();
             }
-            game.addPlayer(player);
+
+            if(game.canAdd(player)) {
+                
+                game.addPlayer(player);
+
+                if(game.isReady())
+                    game.notifyReady();
+            } 
+            else { 
+                console.log('refresh');
+                game.refresh(player);
+            }
+            
             console.log('gameSent: ' + game.id);
         });
     });

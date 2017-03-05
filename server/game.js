@@ -12,27 +12,36 @@ function Game(id) {
 
 Game.prototype = {
 
-	ready: function() {
+	canAdd: function(player) {
+		return ! this.hasPlayer(player) && ! this.isReady();
+	},
+
+	hasPlayer: function(player) {
+		return this.player1 == player || this.player2 == player;
+	},
+
+	isReady: function() {
 		return this.player1 != null && this.player2 != null;
 	},
 
-	addPlayer(player) {
-
+	addPlayer: function(player) {
 		if(!this.player1 || !this.player2) {
-			
-			player.reset();
-
-			if(!this.player1)
+			if(!this.player1) {
 				this.player1 = player;
+			}
 			else if(this.player1.id != player.id) {
 				this.player2 = player;
 			}
-		}
-
-		if(this.ready()) {
-			console.log('ready');
-			this.notifyReady();
+			this.sendGame(player);
 		}	
+	},
+
+	sendGame: function(player) {
+		this.sendMessage(player, 'gameJoined', { 
+			gameId: this.id,
+			player: player.getData(),
+			actions: this.getActions()
+	 	});
 	},
 
 	notifyReady: function() {
@@ -41,33 +50,33 @@ Game.prototype = {
 	},
 
 	_notifyReady: function(p1,p2) {
-		p1.getSocket().emit('ready', { 
+		this.sendMessage(p1, 'ready', { 
 			gameId: this.id,
-
-			adversary: {
-				id: p2.id,		
-				life: p2.life,
-				bullet: p2.bullet,
-				armor: p2.armor
-			},
-			 
-			actions: [	
-				{id: 0, name: 'Recharger', cost: -1},
-		 		{id: 1, name: 'Tirer', cost: 1},
-		 		{id: 2, name: 'Se proteger', cost: 0},
-		 		{id: 3, name: 'Super recharge', cost: -3},
-		 		{id: 4, name: 'Super tir', cost: 5}
-	 		]
+			adversary: p2.getData(),
 	 	});
 	},
 
-	play: function(playerId, actionId, callback) {
-		var player = getPlayer(playerId);
+	refresh: function(player) {
+		this.sendMessage(player, 'refresh', {
+			gameId: this.id,
+			adversary: this.getOther(player).getData(),
+			player: player.getData(),
+			actions: this.getActions()
+		});
+	},
 
-		if(player instanceof Error) {
-			console.log(player);
-			return false;
-		}
+	sendMessage: function(player, messageType, messageData) {
+		player.sockets.forEach(s => {
+			try { 
+				s.emit(messageType, messageData);
+			}
+			catch(err) {
+				console.log(err);
+			}
+		});
+	},
+
+	play: function(player, actionId, callback) {
 
 		if(!player.setAction(this.actions.get(actionId))) {
 			console.log('Error: player ' + playerId + ' can not pay action: ' + actionId);
@@ -77,8 +86,6 @@ Game.prototype = {
 		if(this.player1.havePlayed() && this.player2.havePlayed()) {
 			doRound(callback);
 		} 
-
-		return true;
 	},
 
 	doRound: function(callback) {
@@ -98,20 +105,22 @@ Game.prototype = {
 		}
 	},
 
-	getPlayer: function(playerId) {
-		if(this.player1.id === playerId)
-			return this.player1;
-		else if(this.player2.id === playerId)
-			return this.player2;
-		else return new Error('Unknown user ' + playerId);
+	getActions: function() {
+		return [	
+			{id: 0, name: 'Recharger', cost: -1},
+	 		{id: 1, name: 'Tirer', cost: 1},
+	 		{id: 2, name: 'Se proteger', cost: 0},
+	 		{id: 3, name: 'Super recharge', cost: -3},
+	 		{id: 4, name: 'Super tir', cost: 5}
+		];
 	},
 
-	getOther: function(playerId) {
-		if(this.player1.id === playerId)
+	getOther: function(player) {
+		if(this.player1 == player)
 			return this.player2;
-		else if(this.player2.id === playerId)
+		else if(this.player2 == player)
 			return this.player1;
-		else return new Error('Unknown user ' + playerId);
+		else return new Error('Unknown user ' + player.id);
 	}
 }
 

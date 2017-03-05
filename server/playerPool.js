@@ -4,6 +4,7 @@ const HashMap       = require('HashMap');
 
 function PlayerPool() {
 	this.players = new HashMap();
+	this.socketMap = new HashMap();
 }
 
 PlayerPool.prototype = {
@@ -25,6 +26,19 @@ PlayerPool.prototype = {
             player = this.createPlayer(socket);
         }
         return player;
+	},
+
+	addPlayerSocket: function(player, socket) {
+		this.socketMap.set(socket, player);
+		player.addSocket(socket);
+	},
+
+	removeSocket: function(socket) {
+		var player = this.socketMap.get(socket);
+		if(player) {
+			player.removeSocket(socket);
+			this.socketMap.remove(socket);
+		}
 	}
 };
 

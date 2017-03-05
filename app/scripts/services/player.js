@@ -21,6 +21,12 @@
  			angular.extend(this, playerData);
  		},
 
+ 		refresh: function(data) {
+ 			this.life = data.life;
+			this.bullet = data.bullet;
+			this.armor = data.armor;
+ 		},
+
  		init: function(callback) {
 
  			var player = this;

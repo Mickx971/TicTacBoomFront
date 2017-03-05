@@ -17,7 +17,7 @@ GamePool.prototype = {
 
 	getFreeGame: function() {
 		for (var game of this.games.values()) {
-		    if(!game.ready())
+		    if(!game.isReady())
 		    	return game;
 		}
 		return this.createGame();
