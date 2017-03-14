@@ -3,6 +3,7 @@ function Player(id, socket) {
 	this.id = id;
 	this.sockets = new Set();
 	this.reset();
+	this.playing = false;
 }
 
 Player.prototype = {
@@ -23,6 +24,10 @@ Player.prototype = {
 
 	removeSocket: function(socket) {
 		this.sockets.delete(socket);
+	},
+
+	isPlaying: function() {
+		return this.playing;
 	},
 
 	reset: function() {

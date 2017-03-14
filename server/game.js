@@ -1,4 +1,5 @@
 const HashMap = require('hashmap');
+const Utils = require('./utils');
 
 function Game(id) {
 	this.id = id;
@@ -28,16 +29,18 @@ Game.prototype = {
 		if(!this.player1 || !this.player2) {
 			if(!this.player1) {
 				this.player1 = player;
+				this.player1.playing = true;
 			}
 			else if(this.player1.id != player.id) {
 				this.player2 = player;
+				this.player2.playing = true;
 			}
 			this.sendGame(player);
 		}	
 	},
 
 	sendGame: function(player) {
-		this.sendMessage(player, 'gameJoined', { 
+		Utils.sendMessage(player, 'gameJoined', { 
 			gameId: this.id,
 			player: player.getData(),
 			actions: this.getActions()
@@ -50,7 +53,7 @@ Game.prototype = {
 	},
 
 	_notifyReady: function(p1,p2) {
-		this.sendMessage(p1, 'ready', { 
+		Utils.sendMessage(p1, 'ready', { 
 			gameId: this.id,
 			adversary: p2.getData(),
 	 	});
@@ -64,22 +67,11 @@ Game.prototype = {
 	refresh: function(player, messageType) {
 		messageType = messageType || 'refresh';
 		var adversary = this.getOther(player);
-		this.sendMessage(player, messageType, {
+		Utils.sendMessage(player, messageType, {
 			gameId: this.id,
 			adversary: adversary ? adversary.getData() : undefined,
 			player: player.getData(),
 			actions: this.getActions()
-		});
-	},
-
-	sendMessage: function(player, messageType, messageData) {
-		player.sockets.forEach(s => {
-			try { 
-				s.emit(messageType, messageData);
-			}
-			catch(err) {
-				console.log(err);
-			}
 		});
 	},
 
@@ -122,14 +114,17 @@ Game.prototype = {
 		this.player1.reset();
 		this.player2.reset();
 
-		this.sendMessage(this.player1, 'end', { gameId: this.id });
-		this.sendMessage(this.player2, 'end', { gameId: this.id });
+		Utils.sendMessage(this.player1, 'end', { gameId: this.id });
+		Utils.sendMessage(this.player2, 'end', { gameId: this.id });
 
 		if(!this.player1.isDead() || !this.player2.isDead()) {
 			var winner = this.player1.isDead() ? this.player2 : this.player1;
 			callback(this, winner);
 		}
 		else callback(this);
+
+		this.player1.playing = false;
+		this.player2.playing = false;
 	},
 
 	getActions: function() {

@@ -46,6 +46,25 @@ io.on('connection', function(socket) {
         socket.emit('setPlayerId', player.id);        
     });
 
+    socket.on('invitation', function(userData) {
+        execute(userData, function(player) {
+            var invited = playerPool.getPlayer(userData.invited);
+            if(invited && !invited.isPlaying()) {
+                gamePool.sendInvitation(player, invited);
+            }
+        });
+    });
+
+    socket.on('invitationAnswer', function(userData) {
+        execute(userData, function(player) {
+            var invitation = gamePool.getInvitation(userData.invitation.id);
+            if(invitation && invitation.invited == player && invatation.isValid()) {
+                invitation.onAnswer(userData.invitation.answer); 
+                gamePool.onInvitationAnswered(invitation);
+            }
+        });
+    });
+
     socket.on('searchGame', function(userData) {
         execute(userData, function(player) {
             var game;
@@ -56,7 +75,7 @@ io.on('connection', function(socket) {
 
             if(game.canAdd(player)) {
                 
-                game.addPlayer(player);
+                gamePool.addGamePlayer(game, player);
 
                 console.log('game joined: ' + game.id);
 
