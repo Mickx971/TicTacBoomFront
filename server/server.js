@@ -81,6 +81,7 @@ io.on('connection', function(socket) {
                 }
             } 
             else { 
+                console.log('refresh');
                 game.refresh(player);
             }
         });
@@ -88,10 +89,10 @@ io.on('connection', function(socket) {
 
     socket.on('action', function(userData) {
         execute(userData, function(player) {
-            // console.log('Action: ' + userData.actionId);
-            // console.log('Player: ' + player.id);
-            // console.log('Game: ' + userData.gameId);
-            // console.log();
+            console.log('Action: ' + userData.actionId);
+            console.log('Player: ' + player.id);
+            console.log('Game: ' + userData.gameId);
+            console.log();
 
             var game = gamePool.getGame(userData.gameId);
             if(game) {

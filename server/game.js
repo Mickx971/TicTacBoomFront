@@ -3,6 +3,7 @@ const Utils = require('./utils');
 
 function Game(id) {
 	this.id = id;
+	this.roundTime = 2;
 	this.actions = new HashMap();
 	this.actions.set(-1, {id: -1, name: 'Wait', 		cost: 0, selfDamage: 0, damage: 0, armor: 0, damageWhenProtected: 0});
 	this.actions.set(0, {id: 0, name: 'Recharger', 		cost: -1, selfDamage: 0, damage: 0, armor: 0, damageWhenProtected: 0});
@@ -49,6 +50,7 @@ Game.prototype = {
 	},
 
 	notifyReady: function() {
+		this.lastRound = new Date();
 		this._notifyReady(this.player1, this.player2);
 		this._notifyReady(this.player2, this.player1);
 	},
@@ -57,10 +59,13 @@ Game.prototype = {
 		Utils.sendMessage(p1, 'ready', { 
 			gameId: this.id,
 			adversary: p2.getData(),
+			timestamp: this.lastRound,
+			roundTime: this.roundTime
 	 	});
 	},
 
 	pushRound: function() {
+		this.lastRound = new Date();
 		this.refresh(this.player1, 'round');
 		this.refresh(this.player2, 'round');
 	},
@@ -72,7 +77,9 @@ Game.prototype = {
 			gameId: this.id,
 			adversary: adversary ? adversary.getData() : undefined,
 			player: player.getData(),
-			actions: this.getActions()
+			actions: this.getActions(),
+			timestamp: this.lastRound,
+			roundTime: this.roundTime
 		});
 	},
 

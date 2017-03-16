@@ -27,6 +27,7 @@ GamePool.prototype = {
 	},
 
 	addGamePlayer: function(game, player) {
+		console.log('Add player: ' + player.id + ' for: ' + game.id);
 		game.addPlayer(player);
 		this.removeInvitations(player);
 	},
@@ -38,6 +39,7 @@ GamePool.prototype = {
 	onGameFinished: function(game, winner) {
 		this.saveGame(game, winner);
 		this.games.remove(game.id);
+		console.log('Game finished: ' + game.id);
 	},
 
 	getGame: function(gameId) {

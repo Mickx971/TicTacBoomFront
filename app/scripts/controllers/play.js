@@ -28,7 +28,6 @@ angular.module('ticTacBoomFrontApp')
 	$scope.roundTimer = 0;
 
 	$scope.updateTimer = function() {	
-		console.log('interv ' + $scope.roundTimer);
 		$scope.roundTimer += 1;
 		if ($scope.roundTimer > 100) {
 			$scope.game.sendPlayerAction();
@@ -36,8 +35,18 @@ angular.module('ticTacBoomFrontApp')
 		} 
 	};
 
-	var launchChrono = function() {
-		$scope.chrono = $interval(function() { $scope.updateTimer(); }, 100);
+	var launchChrono = function(roundTime, offset) {
+
+		$scope.roundTime = roundTime;
+		if(offset) {
+
+			console.log('roundTime ' + roundTime);
+			console.log('offset ' + offset);
+
+			var start = Math.floor((((roundTime * 1000) - offset)/(roundTime * 1000))*100);
+			$scope.roundTimer = start > 0 ? 100 - start : 90;
+		}
+		$scope.chrono = $interval(function() { $scope.updateTimer(); }, roundTime * 10);
 	};
 
 	var stopChrono = function() {
@@ -71,7 +80,14 @@ angular.module('ticTacBoomFrontApp')
 		});
 	});
 
-	$scope.game.setOnReadyCallback(launchChrono);
+	$scope.game.setOnReadyCallback(function(roundTime) {
+		launchChrono(roundTime);
+	});
 	$scope.game.setOnActionSentCallback(stopChrono);
-	$scope.game.setOnRoundDoneCallback(launchChrono);	
+	$scope.game.setOnRoundDoneCallback(function(roundTime) {
+		launchChrono(roundTime);
+	});	
+	$scope.game.setOnRefreshCallback(function(roundTime, offset) {
+		launchChrono(roundTime, offset);
+	});
 });

@@ -56,21 +56,27 @@
  			socket.on('ready', function(gameData) {
  				console.log('ready');
  				doRefresh(gameData);
+ 				game.timestamp = gameData.timestamp;
  				game.player.action = undefined;
- 				game.onReadyCallback();
+ 				game.onReadyCallback(gameData.roundTime);
  			});
 
  			socket.on('refresh', function(gameData) {
  				console.log('refresh');
  				game.id = gameData.gameId;
  				doRefresh(gameData);
+ 				if(gameData.timestamp) {
+ 					var timestamp = Date.parse(gameData.timestamp);
+ 					var offset = new Date() - timestamp;
+ 					game.onRefreshCallback(gameData.roundTime, offset);
+ 				}
  			});
 
  			socket.on('round', function(gameData) {
  				console.log('round');
  				doRefresh(gameData);
  				game.player.action = undefined;
- 				game.onRoundCallback();
+ 				game.onRoundCallback(gameData.roundTime);
  			});
 
  			socket.on('end', function() {
@@ -98,6 +104,10 @@
 
  		setOnRoundDoneCallback: function(callback) {
  			this.onRoundCallback = callback;
+ 		},
+
+ 		setOnRefreshCallback: function(callback) {
+ 			this.onRefreshCallback = callback;
  		},
 
 		sendReplayRequest: function(bool) {
