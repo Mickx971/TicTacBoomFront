@@ -8,7 +8,7 @@
 * Controller of the ticTacBoomFrontApp
 */
 angular.module('ticTacBoomFrontApp')
-.controller('PlayCtrl', function ($scope, $uibModal, Game) {
+.controller('PlayCtrl', function ($scope, $uibModal, $interval, Game) {
 	this.awesomeThings = [
 	'HTML5 Boilerplate',
 	'AngularJS',
@@ -24,7 +24,30 @@ angular.module('ticTacBoomFrontApp')
 		$scope.game.sendReplayRequest(bool);
 	};
 
+	$scope.roundTimerActivated = true;
+	$scope.roundTimer = 0;
+
+	$scope.updateTimer = function() {	
+		console.log('interv ' + $scope.roundTimer);
+		$scope.roundTimer += 1;
+		if ($scope.roundTimer > 100) {
+			$scope.game.sendPlayerAction();
+			$scope.roundTimer = 0;
+		} 
+	};
+
+	var launchChrono = function() {
+		$scope.chrono = $interval(function() { $scope.updateTimer(); }, 100);
+	};
+
+	var stopChrono = function() {
+		$interval.cancel($scope.chrono);
+	};
+
 	$scope.game.setOnGameEndedCallback(function() {
+
+		stopChrono();
+
 		modal = $uibModal.open({
 			animation: true,
 			ariaLabelledBy: 'modal-title',
@@ -46,5 +69,9 @@ angular.module('ticTacBoomFrontApp')
 		modal.result.then(function() {}, function () {
 			$scope.sendReplayRequest(false);
 		});
-	});	
+	});
+
+	$scope.game.setOnReadyCallback(launchChrono);
+	$scope.game.setOnActionSentCallback(stopChrono);
+	$scope.game.setOnRoundDoneCallback(launchChrono);	
 });

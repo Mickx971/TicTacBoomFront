@@ -18,7 +18,6 @@
  		init: function() {
 
  			this.player = new Player();
- 			this.player.game = this;
 
  			this.player.init(function() {
  				socket.sendMessage('searchGame', { gameId: $cookies.get('gameId') });
@@ -57,6 +56,8 @@
  			socket.on('ready', function(gameData) {
  				console.log('ready');
  				doRefresh(gameData);
+ 				game.player.action = undefined;
+ 				game.onReadyCallback();
  			});
 
  			socket.on('refresh', function(gameData) {
@@ -68,6 +69,8 @@
  			socket.on('round', function(gameData) {
  				console.log('round');
  				doRefresh(gameData);
+ 				game.player.action = undefined;
+ 				game.onRoundCallback();
  			});
 
  			socket.on('end', function() {
@@ -85,10 +88,28 @@
  			this.onGameEndedCallback = callback;
  		},
 
+ 		setOnReadyCallback: function(callback) {
+ 			this.onReadyCallback = callback;
+ 		},
+
+ 		setOnActionSentCallback: function(callback) {
+ 			this.onActionSentCallback = callback;
+ 		},
+
+ 		setOnRoundDoneCallback: function(callback) {
+ 			this.onRoundCallback = callback;
+ 		},
+
 		sendReplayRequest: function(bool) {
 			if(bool) {
 				socket.sendMessage('invitation', {invited: this.adversary.id});				
 			}
+		},
+
+		sendPlayerAction: function() {
+			var action = typeof this.player.action !== 'undefined' ? this.player.action : -1;
+			socket.sendMessage('action', { gameId: this.id, actionId: action});
+			this.onActionSentCallback();
 		},
 
  		closeGame: function() {

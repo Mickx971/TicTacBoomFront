@@ -43,7 +43,7 @@
  		},
 
  		play: function(action) {
- 			socket.sendMessage('action', { gameId: this.game.id, actionId: action });
+ 			this.action = action;
  		}
  	};    
 

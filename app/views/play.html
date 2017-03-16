@@ -8,6 +8,9 @@
 			<div class="bullet">Balles: {{game.adversary.bullet}}</div>
 			<div>L'adversaire a fait : {{game.adversary.actionPlayed.name}}</div>
 		</div>
+		<div class="timer">
+			<md-progress-circular md-mode="determinate" value="{{roundTimer}}" ng-value="{{roundTimer}}" md-diameter="100"></md-progress-circular>
+		</div>
 		<div class="currentPlayer"> 
 			<div class="actions">
 				<span ng-repeat="action in game.actions">

@@ -15,9 +15,8 @@ angular
     'ngResource',
     'ngRoute',
     'ngSanitize',
-    'ngTouch',
+    'ngMaterial',
     'btford.socket-io',
-    'oc.lazyLoad',
     'ui.bootstrap'
   ])
   .config(function ($routeProvider) {
