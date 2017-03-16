@@ -83,9 +83,8 @@ Game.prototype = {
 		}
 
 		if(this.player1.havePlayed() && this.player2.havePlayed()) {
-			console.log('doRound');
 			this.doRound(callback);
-		} else console.log('not doRound');
+		}
 	},
 
 	doRound: function(callback) {

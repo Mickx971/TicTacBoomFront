@@ -10,6 +10,7 @@ exports.sendMessage = function(player, messageType, messageData) {
 			s.emit(messageType, messageData);
 		}
 		catch(err) {
+			console.log('Socket error');
 			console.log(err);
 		}
 	});

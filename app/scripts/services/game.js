@@ -75,22 +75,23 @@
  					game.onGameEndedCallback();
  				}
  			});
+
+ 			socket.on('invitationCreated', function() {
+
+ 			});
  		},
 
  		setOnGameEndedCallback: function(callback) {
- 			console.log('coucou');
  			this.onGameEndedCallback = callback;
  		},
 
- 		startGame: function() {
-
- 		},
+		sendReplayRequest: function(bool) {
+			if(bool) {
+				socket.sendMessage('invitation', {invited: this.adversary.id});				
+			}
+		},
 
  		closeGame: function() {
-
- 		},
-
- 		takeCard: function() {
 
  		}
  	};

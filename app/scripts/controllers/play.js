@@ -21,12 +21,7 @@ angular.module('ticTacBoomFrontApp')
 
 	$scope.sendReplayRequest = function(bool) {
 		modal.close();
-		if(bool) {
-			
-		}
-		else {
-			
-		}
+		$scope.game.sendReplayRequest(bool);
 	};
 
 	$scope.game.setOnGameEndedCallback(function() {

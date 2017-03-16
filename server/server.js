@@ -60,7 +60,6 @@ io.on('connection', function(socket) {
             var invitation = gamePool.getInvitation(userData.invitation.id);
             if(invitation && invitation.invited == player && invatation.isValid()) {
                 invitation.onAnswer(userData.invitation.answer); 
-                gamePool.onInvitationAnswered(invitation);
             }
         });
     });
@@ -77,12 +76,9 @@ io.on('connection', function(socket) {
                 
                 gamePool.addGamePlayer(game, player);
 
-                console.log('game joined: ' + game.id);
-
                 if(game.isReady()) {
-                    console.log('ready');
                     game.notifyReady();
-                } else console.log('not ready');
+                }
             } 
             else { 
                 game.refresh(player);
@@ -92,10 +88,10 @@ io.on('connection', function(socket) {
 
     socket.on('action', function(userData) {
         execute(userData, function(player) {
-            console.log('Action: ' + userData.actionId);
-            console.log('Player: ' + player.id);
-            console.log('Game: ' + userData.gameId);
-            console.log();
+            // console.log('Action: ' + userData.actionId);
+            // console.log('Player: ' + player.id);
+            // console.log('Game: ' + userData.gameId);
+            // console.log();
 
             var game = gamePool.getGame(userData.gameId);
             if(game) {

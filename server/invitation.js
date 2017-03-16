@@ -9,15 +9,18 @@ function Invitation(id, inviting, invited, gamePool) {
 
 Invitation.prototype = {
 	onAnswer: function(accepted) {
+		
+		this.gamePool.onInvitationAnswered(this);
+
 		if(accepted) {
 			//Utils.sendMessage(inviting, 'invitationAccepted', this);
-			var game = gamePool.createGame();
-			gamePool.addGamePlayer(game, this.inviting);
-			gamePool.addGamePlayer(game, this.invited);
+			var game = this.gamePool.createGame();
+			this.gamePool.addGamePlayer(game, this.inviting);
+			this.gamePool.addGamePlayer(game, this.invited);
 			game.notifyReady();
 		}
 		else {
-			Utils.sendMessage(inviting, 'invitationRefused', this);	
+			Utils.sendMessage(this.inviting, 'invitationRefused', this);	
 		}
 	},
 

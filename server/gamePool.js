@@ -44,15 +44,32 @@ GamePool.prototype = {
 		return this.games.get(gameId);
 	},
 
-	createInvitation: function(inviting, invited) {
-		var id = utils.Guid();
-		var invitation = new Invitation(id, inviting, invited, this);
-		this.invitations.set(id, invitation);
+	sendInvitation: function(inviting, invited) {
 
-		this.addPlayerInvitation(inviting, invitation);
-		this.addPlayerInvitation(invited, invitation);
-		
-		utils.sendMessage(inviting, 'invitationCreated', invitation);
+		var invitations = this.playerInvitationsMap.get(invited);
+		if(invitations) {
+			for(let inv of invitations) {
+				if(inv.invited == inviting) {
+					inv.onAnswer(true);
+					return;
+				}
+			}
+		}
+
+		var id = utils.Guid();
+		var inv = new Invitation(id, inviting, invited, this);
+		this.invitations.set(id, inv);
+
+		this.addPlayerInvitation(inviting, inv);
+		this.addPlayerInvitation(invited, inv);
+
+		utils.sendMessage(inviting, 'invitationCreated', { 
+			invitation: { 
+				id: inv.id, 
+				inviting: inv.inviting.id,
+				invited: inv.invited.id
+			} 
+		});
 	},
 
 	addPlayerInvitation: function(player, invitation) {
@@ -69,6 +86,7 @@ GamePool.prototype = {
 	},
 
 	removeInvitations: function(player) {
+
 		var invitations = this.playerInvitationsMap.get(player);
 		if(invitations) {
 			invitations.forEach(inv => {
@@ -83,19 +101,19 @@ GamePool.prototype = {
 	removeInvitation: function(playerBusy, invitation) {
 		var other = invitation.getOther(playerBusy);
 		var invitations = this.playerInvitationsMap.get(other);
-		invitations.remove(invitation);
+		invitations.delete(invitation);
 	},
 
 	onInvitationAnswered: function(invitation) {
-		this.invitations.delete(invitation);
+		this.invitations.remove(invitation);
 
 		var invitations = this.playerInvitationsMap.get(invitation.inviting);
 		if(invitations)
-			invitations.remove(invitation);
+			invitations.delete(invitation);
 
 		invitations = this.playerInvitationsMap.get(invitation.invited);
 		if(invitations)
-			invitations.remove(invitation);
+			invitations.delete(invitation);
 	}	
 };
 
