@@ -8,35 +8,48 @@
 * Controller of the ticTacBoomFrontApp
 */
 angular.module('ticTacBoomFrontApp')
-.controller('PlayCtrl', function ($scope, Game) {
+.controller('PlayCtrl', function ($scope, $uibModal, Game) {
 	this.awesomeThings = [
 	'HTML5 Boilerplate',
 	'AngularJS',
 	'Karma'
 	];
 
+	var modal;
+
 	$scope.game = new Game();
 
+	$scope.sendReplayRequest = function(bool) {
+		modal.close();
+		if(bool) {
+			
+		}
+		else {
+			
+		}
+	};
+
 	$scope.game.setOnGameEndedCallback(function() {
-		console.log('qsdfq');
-		alert('fin de la partie !!');
-	});
+		modal = $uibModal.open({
+			animation: true,
+			ariaLabelledBy: 'modal-title',
+			ariaDescribedBy: 'modal-body',
+			templateUrl: 'views/replayModal.html',
+			scope: $scope,
+			controller: function($scope) {
+				$scope.onReplayYes = function() {
+					$scope.sendReplayRequest(true);
+				};
 
-	// var modal = $uibModal.open({
-	// 	animation: true,
-	// 	ariaLabelledBy: 'modal-title',
-	// 	ariaDescribedBy: 'modal-body',
-	// 	templateUrl: 'replayModal.html',
-	// 	controller: function($scope) {
- //        	$scope.name = 'top';  
- //      	},
-	// 	size: 'sm'
-	// });
+				$scope.onReplayNo = function() {
+					$scope.sendReplayRequest(false);
+				};
+			},
+			size: 'sm'
+		});
 
-	// modal.result.then(function (data) {
-	// 	console.log(data);	
-	// }, function () {
-	// 	console.log('Modal dismissed at: ' + new Date());
-	// });
-
+		modal.result.then(function() {}, function () {
+			$scope.sendReplayRequest(false);
+		});
+	});	
 });
