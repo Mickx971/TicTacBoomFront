@@ -17,7 +17,4 @@ describe('Controller: PlayCtrl', function () {
     });
   }));
 
-  it('should attach a list of awesomeThings to the scope', function () {
-    expect(PlayCtrl.awesomeThings.length).toBe(3);
-  });
 });

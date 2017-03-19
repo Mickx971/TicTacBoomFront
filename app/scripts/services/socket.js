@@ -9,8 +9,8 @@
  */
 
  angular.module('ticTacBoomFrontApp')
-  .factory('socket', function (socketFactory, $cookies) {
-    var socket = socketFactory({ioSocket: io.connect('http://localhost:3000')});
+  .factory('socket', function (socketFactory, $cookies, Config) {
+    var socket = socketFactory({ioSocket: io.connect(Config.serverBase)});
     socket.sendMessage = function(messageType, message) {
 		if(!message) {
 			message = {};

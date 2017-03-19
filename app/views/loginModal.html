@@ -1,0 +1,21 @@
+<div class="modal-header">
+	<button type="button" class="close" data-dismiss="modal" ng-click="onCancel()">&times;</button>
+	<h4 class="modal-title">Connection</h4>
+</div>
+<div class="modal-body">
+	<form>
+		<div class="form-group">
+			<label for="mail">Adresse email</label>
+			<input type="email" class="form-control" id="mail" placeholder="example@mail.com" ng-model="userEmail">
+		</div>
+		<div class="form-group">
+			<label for="pwd">Mot de passe</label>
+			<input type="password" class="form-control" id="pwd" placeholder="Mot de passe" aria-describedby="loginHelp" ng-model="userPassword">
+			<small id="loginHelp" class="form-text text-muted" ng-show="error">Echec de l'authentification</small>
+		</div>
+		<button type="submit" class="btn btn-primary" ng-click="onLogin()">Se connecter</button>
+	</form>
+</div>
+<div class="modal-footer">
+	<button type="button" class="btn" data-dismiss="modal" ng-click="onCreateAccount()">Créer un compte</button>
+</div>

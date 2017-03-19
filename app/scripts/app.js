@@ -8,35 +8,43 @@
  *
  * Main module of the application.
  */
-angular
-  .module('ticTacBoomFrontApp', [
-    'ngAnimate',
-    'ngCookies',
-    'ngResource',
-    'ngRoute',
-    'ngSanitize',
-    'ngMaterial',
-    'btford.socket-io',
-    'ui.bootstrap'
-  ])
-  .config(function ($routeProvider) {
-    $routeProvider
-      // .when('/', {
-      //   templateUrl: 'views/main.html',
-      //   controller: 'MainCtrl',
-      //   controllerAs: 'main'
-      // })
-      .when('/about', {
-        templateUrl: 'views/about.html',
-        controller: 'AboutCtrl',
-        controllerAs: 'about'
-      })
-      .when('/play/:gameId', {
-        templateUrl: 'views/play.html',
-        controller: 'PlayCtrl',
-        controllerAs: 'play'
-      })
-      .otherwise({
-        redirectTo: '/play/0'
-      });
-  });
+var app = angular
+	.module('ticTacBoomFrontApp', [
+		'ngAnimate',
+		'ngCookies',
+		'ngResource',
+		'ngRoute',
+		'ngSanitize',
+		'ngMaterial',
+		'btford.socket-io',
+		'ui.bootstrap'
+	]);
+
+app.config(function ($routeProvider, $httpProvider) {
+	$routeProvider
+		.when('/', {
+			templateUrl: 'views/play.html',
+			controller: 'PlayCtrl',
+			controllerAs: 'play'
+		})
+		.when('/createAccount', {
+		  templateUrl: 'views/createaccount.html',
+		  controller: 'CreateaccountCtrl',
+		  controllerAs: 'createAccount'
+		})
+		.otherwise({
+			redirectTo: '/'
+		});
+
+	$httpProvider.defaults.useXDomain = true;
+    delete $httpProvider.defaults.headers.common['X-Requested-With'];
+});
+
+
+
+
+
+
+
+
+

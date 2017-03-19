@@ -8,86 +8,89 @@
 * Controller of the ticTacBoomFrontApp
 */
 angular.module('ticTacBoomFrontApp')
-.controller('PlayCtrl', function ($scope, $uibModal, $interval, Game) {
-	this.awesomeThings = [
-	'HTML5 Boilerplate',
-	'AngularJS',
-	'Karma'
-	];
+.controller('PlayCtrl', function ($scope, $uibModal, $interval, $rootScope, Game) {
 
-	var modal;
+	if($rootScope.userConnected) {
 
-	$scope.game = new Game();
+		var modal;
 
-	$scope.sendReplayRequest = function(bool) {
-		modal.close();
-		$scope.game.sendReplayRequest(bool);
-	};
+		$scope.game = new Game();
 
-	$scope.roundTimerActivated = true;
-	$scope.roundTimer = 0;
+		$scope.sendReplayRequest = function(bool) {
+			modal.close();
+			$scope.game.sendReplayRequest(bool);
+		};
 
-	$scope.updateTimer = function() {	
-		$scope.roundTimer += 1;
-		if ($scope.roundTimer > 100) {
-			$scope.game.sendPlayerAction();
-			$scope.roundTimer = 0;
-		} 
-	};
+		$scope.roundTimerActivated = true;
+		$scope.roundTimer = 0;
 
-	var launchChrono = function(roundTime, offset) {
+		$scope.updateTimer = function() {	
+			$scope.roundTimer += 1;
+			if ($scope.roundTimer > 100) {
+				$scope.game.sendPlayerAction();
+				$scope.roundTimer = 0;
+			} 
+		};
 
-		$scope.roundTime = roundTime;
-		if(offset) {
+		var launchChrono = function(roundTime, offset) {
 
-			console.log('roundTime ' + roundTime);
-			console.log('offset ' + offset);
+			$scope.roundTime = roundTime;
+			if(offset) {
 
-			var start = Math.floor((((roundTime * 1000) - offset)/(roundTime * 1000))*100);
-			$scope.roundTimer = start > 0 ? 100 - start : 90;
-		}
-		$scope.chrono = $interval(function() { $scope.updateTimer(); }, roundTime * 10);
-	};
+				console.log('roundTime ' + roundTime);
+				console.log('offset ' + offset);
 
-	var stopChrono = function() {
-		$interval.cancel($scope.chrono);
-	};
+				var start = Math.floor((((roundTime * 1000) - offset)/(roundTime * 1000))*100);
+				$scope.roundTimer = start > 0 ? 100 - start : 90;
+			}
+			$scope.chrono = $interval(function() { $scope.updateTimer(); }, roundTime * 10);
+		};
 
-	$scope.game.setOnGameEndedCallback(function() {
+		var stopChrono = function() {
+			$interval.cancel($scope.chrono);
+		};
 
-		stopChrono();
+		$scope.game.setOnGameEndedCallback(function() {
 
-		modal = $uibModal.open({
-			animation: true,
-			ariaLabelledBy: 'modal-title',
-			ariaDescribedBy: 'modal-body',
-			templateUrl: 'views/replayModal.html',
-			scope: $scope,
-			controller: function($scope) {
-				$scope.onReplayYes = function() {
-					$scope.sendReplayRequest(true);
-				};
+			stopChrono();
 
-				$scope.onReplayNo = function() {
-					$scope.sendReplayRequest(false);
-				};
-			},
-			size: 'sm'
+			modal = $uibModal.open({
+				animation: true,
+				ariaLabelledBy: 'modal-title',
+				ariaDescribedBy: 'modal-body',
+				templateUrl: 'views/replayModal.html',
+				scope: $scope,
+				controller: function($scope) {
+					$scope.onReplayYes = function() {
+						$scope.sendReplayRequest(true);
+					};
+
+					$scope.onReplayNo = function() {
+						$scope.sendReplayRequest(false);
+					};
+
+					$scope.onCancel = function() {
+						$scope.sendReplayRequest(false);
+					};
+				},
+				size: 'sm'
+			});
+
+			modal.result.then(function() {}, function () {
+				$scope.sendReplayRequest(false);
+			});
 		});
 
-		modal.result.then(function() {}, function () {
-			$scope.sendReplayRequest(false);
+		$scope.game.setOnReadyCallback(function(roundTime) {
+			launchChrono(roundTime);
 		});
-	});
+		$scope.game.setOnActionSentCallback(stopChrono);
+		$scope.game.setOnRoundDoneCallback(function(roundTime) {
+			launchChrono(roundTime);
+		});	
+		$scope.game.setOnRefreshCallback(function(roundTime, offset) {
+			launchChrono(roundTime, offset);
+		});
 
-	$scope.game.setOnReadyCallback(function(roundTime) {
-		launchChrono(roundTime);
-	});
-	$scope.game.setOnActionSentCallback(stopChrono);
-	$scope.game.setOnRoundDoneCallback(function(roundTime) {
-		launchChrono(roundTime);
-	});	
-	$scope.game.setOnRefreshCallback(function(roundTime, offset) {
-		launchChrono(roundTime, offset);
-	});
+	}
 });

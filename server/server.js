@@ -12,12 +12,39 @@ var session = Session({
         saveUninitialized: true
     });
 
+
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, set-cookie");
+    next();
+});
+
 app.use(session)
 
 // Routes
 
-.get('/play/:gameId', function(req,res) {
-	res.end();
+.get('/login?', function(req, res) {
+    var email = req.query.email;
+    var pwd = req.query.password;
+
+    console.log(email);
+    console.log(pwd);
+
+    var playerId = Utils.Guid();
+    res.json({playerId: playerId});
+})
+
+.get('/signIn', function(req, res) {
+    var email = req.query.email;
+    var password = req.query.password;
+    var pseudo = req.query.pseudo;
+
+    console.log(email);
+    console.log(password);
+    console.log(pseudo);
+
+    var playerId = Utils.Guid();
+    res.json({playerId: playerId});
 });
 
 

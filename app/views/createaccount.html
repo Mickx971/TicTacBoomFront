@@ -1,0 +1,20 @@
+<div>
+	<form>
+		<div class="form-group">
+			<label for="mail">Adresse email</label>
+			<input type="email" class="form-control" id="mail" placeholder="example@mail.com" ng-model="userEmail">
+		</div>
+		<div class="form-group">
+			<label for="pwd">Mot de passe</label>
+			<input type="password" class="form-control" id="pwd1" placeholder="Mot de passe" aria-describedby="loginHelp" ng-model="pwd1">
+			<label for="pwd">Confirmer votre mot de passe</label>
+			<input type="password" class="form-control" id="pwd2" placeholder="Mot de passe" aria-describedby="pwdHelp" ng-model="pwd2">
+			<small id="pwdHelp" class="form-text text-muted" ng-show="pwd2 !== pwd1">Les mots de passe sont différents</small>
+		</div>
+		<div class="form-group">
+			<label for="playerName">Votre pseudo</label>
+			<input type="text" class="form-control" id="playerName" placeholder="Entrez votre pseudo" ng-model="pseudo">
+		</div>
+		<button type="submit" class="btn btn-primary" ng-click="createAccount2()">Créer compte</button>
+	</form>
+</div>
