@@ -12,6 +12,9 @@ var session = Session({
         saveUninitialized: true
     });
 
+var gamePool   = new (require('./gamePool'))();
+var playerPool = new (require('./playerPool'))();
+
 
 app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
@@ -30,8 +33,18 @@ app.use(session)
     console.log(email);
     console.log(pwd);
 
-    var playerId = Utils.Guid();
-    res.json({playerId: playerId});
+    var player = playerPool.getOrCreatePlayer();
+    console.log('login');
+    res.json({playerId: player.id});
+})
+
+.get('/logout', function(req, res) {
+    var player = playerPool.getPlayer(req.query.playerId);
+    if(player) {
+        console.log('logout: ' + player.id);
+        gamePool.removePlayer(player.id);
+        playerPool.removePlayer(player);
+    }
 })
 
 .get('/signIn', function(req, res) {
@@ -43,13 +56,14 @@ app.use(session)
     console.log(password);
     console.log(pseudo);
 
-    var playerId = Utils.Guid();
-    res.json({playerId: playerId});
+    var player = playerPool.getOrCreatePlayer();
+    res.json({playerId: player.id});
+})
+
+.get('/players', function(req, res) {
+    res.json(playerPool.players.values());
 });
 
-
-var gamePool   = new (require('./gamePool'))();
-var playerPool = new (require('./playerPool'))();
 
 io.on('connection', function(socket) {
 
@@ -70,7 +84,8 @@ io.on('connection', function(socket) {
     socket.on('play', function(userData) {
         userData = userData || {};
         var player = playerPool.getOrCreatePlayer(userData.id, socket);
-        socket.emit('setPlayerId', player.id);        
+        socket.emit('setPlayerId', player.id); 
+        console.log('User setted: ' + player.id);       
     });
 
     socket.on('invitation', function(userData) {
@@ -85,7 +100,7 @@ io.on('connection', function(socket) {
     socket.on('invitationAnswer', function(userData) {
         execute(userData, function(player) {
             var invitation = gamePool.getInvitation(userData.invitation.id);
-            if(invitation && invitation.invited == player && invatation.isValid()) {
+            if(invitation && invitation.invited == player && invitation.isValid()) {
                 invitation.onAnswer(userData.invitation.answer); 
             }
         });
@@ -108,7 +123,7 @@ io.on('connection', function(socket) {
                 }
             } 
             else { 
-                console.log('refresh');
+                console.log('refresh de ' + player.id);
                 game.refresh(player);
             }
         });

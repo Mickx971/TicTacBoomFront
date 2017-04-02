@@ -20,7 +20,11 @@ Invitation.prototype = {
 			game.notifyReady();
 		}
 		else {
-			Utils.sendMessage(this.inviting, 'invitationRefused', this);	
+			Utils.sendMessage(this.inviting, 'invitationRefused', { 
+				id: this.id, 
+				inviting: this.inviting, 
+				invited: this.invited 
+			});	
 		}
 	},
 

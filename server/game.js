@@ -38,6 +38,7 @@ Game.prototype = {
 				this.player2.playing = true;
 			}
 			this.sendGame(player);
+			console.log('Played added: ' + player.id + ' Game: ' + this.id);
 		}	
 	},
 

@@ -1,31 +1,33 @@
 'use strict';
 
 angular.module('ticTacBoomFrontApp')
-	.controller('MainCtrl', function($scope, $cookies, $uibModal, $location, authentication) {
+	.controller('MainCtrl', function($rootScope, $cookies, $uibModal, $location, authentication) {
 
-		var updateConnectionAction = function() {
-			if($cookies.get('playerId')) {
-				$scope.ConnectionAction = 'Se déconnecter';
-				$scope.userConnected = true;
+		$rootScope.updateConnectionAction = function() {
+			console.log('currentUserId = ' + $cookies.get('playerId'));
+			$rootScope.currentUserId = $cookies.get('playerId');
+			if($rootScope.currentUserId) {
+				$rootScope.ConnectionAction = 'Se déconnecter';
+				$rootScope.userConnected = true;
 			}
 			else {
-				$scope.ConnectionAction = 'Se connecter';	
-				$scope.userConnected = false;
+				$rootScope.ConnectionAction = 'Se connecter';	
+				$rootScope.userConnected = false;
 			}
 		};
 
-		updateConnectionAction();
+		$rootScope.updateConnectionAction();
 
-		$scope.onConnectionAction = function() {
+		$rootScope.onConnectionAction = function() {
 
-			if(!$scope.userConnected) {
+			if(!$rootScope.userConnected) {
 
 				var modal = $uibModal.open({
 					animation: true,
 					ariaLabelledBy: 'modal-title',
 					ariaDescribedBy: 'modal-body',
 					templateUrl: 'views/loginModal.html',
-					scope: $scope,
+					scope: $rootScope,
 					controller: function($scope) {
 
 						$scope.error = false;
@@ -43,7 +45,7 @@ angular.module('ticTacBoomFrontApp')
 								$scope.userPassword,
 								function(success, message) {
 									if(success) {
-										updateConnectionAction();
+										$rootScope.updateConnectionAction();
 										modal.close();
 									}
 									else {
@@ -64,14 +66,17 @@ angular.module('ticTacBoomFrontApp')
 				});
 
 				modal.result.then(function() {
+					modal.close();
 				}, function() {
 					modal.close();
 				});
 			}
 			else {
+				var playerId = $cookies.get('playerId');
+				authentication.logout(playerId);
 				$cookies.remove('playerId');
 				$location.path('/');
-				updateConnectionAction();
+				$rootScope.updateConnectionAction();
 			}
 		};
 });

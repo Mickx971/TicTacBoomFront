@@ -25,12 +25,23 @@ PlayerPool.prototype = {
 		if(!(player = this.getPlayer(id))) {
             player = this.createPlayer(socket);
         }
+        if(socket) {
+        	player.addSocket(socket);
+        }
         return player;
 	},
 
 	addPlayerSocket: function(player, socket) {
 		this.socketMap.set(socket, player);
-		player.addSocket(socket);
+		if(socket)
+			player.addSocket(socket);
+	},
+
+	removePlayer: function(player) {
+		this.players.remove(player.id);
+		player.sockets.forEach( s => {
+			this.socketMap.remove(s);
+		});
 	},
 
 	removeSocket: function(socket) {

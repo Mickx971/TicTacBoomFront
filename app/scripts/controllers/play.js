@@ -8,7 +8,7 @@
 * Controller of the ticTacBoomFrontApp
 */
 angular.module('ticTacBoomFrontApp')
-.controller('PlayCtrl', function ($scope, $uibModal, $interval, $rootScope, Game) {
+.controller('PlayCtrl', function ($scope, $window, $uibModal, $interval, $rootScope, $location, Game) {
 
 	if($rootScope.userConnected) {
 
@@ -76,7 +76,8 @@ angular.module('ticTacBoomFrontApp')
 				size: 'sm'
 			});
 
-			modal.result.then(function() {}, function () {
+			modal.result.then(function() {
+			}, function () {
 				$scope.sendReplayRequest(false);
 			});
 		});
@@ -92,5 +93,8 @@ angular.module('ticTacBoomFrontApp')
 			launchChrono(roundTime, offset);
 		});
 
+	}
+	else {
+		$location.path('/');
 	}
 });

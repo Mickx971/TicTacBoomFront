@@ -8,7 +8,7 @@
  * Factory in the ticTacBoomFrontApp.
  */
  angular.module('ticTacBoomFrontApp')
- .factory('Player', function ($cookies, socket) {
+ .factory('Player', function () {
  	function Player(playerData) {
  		if(playerData) {
  			this.setData(playerData);
@@ -26,20 +26,6 @@
 			this.bullet = data.bullet;
 			this.armor = data.armor;
 			this.actionPlayed = data.actionPlayed;
- 		},
-
- 		init: function(callback) {
-
- 			var player = this;
-
- 			socket.on('setPlayerId', function(id) {
- 				console.log('setPlayerId: ' + id);
-				$cookies.put('playerId', id);
-				player.id = id;
-				callback();
-		    });
-
- 			socket.sendMessage('play');
  		},
 
  		play: function(action) {

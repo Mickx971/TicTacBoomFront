@@ -18,10 +18,9 @@
  		init: function() {
 
  			this.player = new Player();
+ 			this.player.id = $cookies.get('playerId');
 
- 			this.player.init(function() {
- 				socket.sendMessage('searchGame', { gameId: $cookies.get('gameId') });
- 			});
+ 			socket.sendMessage('searchGame', { gameId: $cookies.get('gameId') });
 
  			var game = this;
 
@@ -45,8 +44,10 @@
  				}
  			};
 
+ 			console.log('initqmsldkfnqmsldkfq');
+
  			socket.on('gameJoined', function(gameData) {
- 				console.log('joined');
+ 				console.log('joined 2');
  				game.id = gameData.gameId;
  				game.actions = gameData.actions;
  				game.player.refresh(gameData.player);

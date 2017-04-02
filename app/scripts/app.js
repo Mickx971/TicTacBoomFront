@@ -22,7 +22,7 @@ var app = angular
 
 app.config(function ($routeProvider, $httpProvider) {
 	$routeProvider
-		.when('/', {
+		.when('/play', {
 			templateUrl: 'views/play.html',
 			controller: 'PlayCtrl',
 			controllerAs: 'play'
@@ -32,8 +32,13 @@ app.config(function ($routeProvider, $httpProvider) {
 		  controller: 'CreateaccountCtrl',
 		  controllerAs: 'createAccount'
 		})
+		.when('/home', {
+		  templateUrl: 'views/home.html',
+		  controller: 'HomeCtrl',
+		  controllerAs: 'home'
+		})
 		.otherwise({
-			redirectTo: '/'
+			redirectTo: '/home'
 		});
 
 	$httpProvider.defaults.useXDomain = true;

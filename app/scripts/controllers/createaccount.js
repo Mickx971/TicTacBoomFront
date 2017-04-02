@@ -13,10 +13,12 @@ angular.module('ticTacBoomFrontApp')
   	$scope.pseudo = $scope.userEmail = $scope.pwd1 = $scope.pwd2 = '';
 
   	var createAccountCallback = function() {
-		$location.path('/');
+		  $location.path('/');
   	};
 
   	$scope.createAccountAction = function() {
+
+  		console.log('createUserAccount');
 
   		authentication.createUserAccount(
   			{ 

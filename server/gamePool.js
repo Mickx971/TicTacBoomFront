@@ -58,6 +58,15 @@ GamePool.prototype = {
 			}
 		}
 
+		// invitations = this.playerInvitationsMap.get(inviting);
+		// if(invitations) {
+		// 	for(let inv of invitations) {
+		// 		if(inv.invited == invited) {
+		// 			return;
+		// 		}
+		// 	}
+		// } 
+
 		var id = utils.Guid();
 		var inv = new Invitation(id, inviting, invited, this);
 		this.invitations.set(id, inv);
@@ -65,13 +74,18 @@ GamePool.prototype = {
 		this.addPlayerInvitation(inviting, inv);
 		this.addPlayerInvitation(invited, inv);
 
-		utils.sendMessage(inviting, 'invitationCreated', { 
+		var data = { 
 			invitation: { 
 				id: inv.id, 
-				inviting: inv.inviting.id,
-				invited: inv.invited.id
+				inviting: inv.inviting,
+				invited: inv.invited
 			} 
-		});
+		};
+
+		utils.sendMessage(inviting, 'invitationCreated', data);
+		utils.sendMessage(invited, 'invitationReceived', data);
+
+		console.log('invitation sended: ' + inv.id);
 	},
 
 	addPlayerInvitation: function(player, invitation) {
@@ -116,6 +130,10 @@ GamePool.prototype = {
 		invitations = this.playerInvitationsMap.get(invitation.invited);
 		if(invitations)
 			invitations.delete(invitation);
+	},
+
+	removePlayer: function(player) {
+		this.removeInvitations(player);
 	}	
 };
 

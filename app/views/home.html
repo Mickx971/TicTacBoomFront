@@ -1,0 +1,19 @@
+<div>
+	<span class="playersPanel">
+		<div ng-repeat="player in players | filter:searchInput">
+			<span class="playerName">{{player.id}}</span>
+			<span type="butoon"class="btn btn-ok" ng-click="sendInvitation(player.id)">Inviter à jouer</span>
+		</div>
+		<div class="playerSearchPanel">
+			<form>
+				<div class="form-group">
+					<label for="searchInput">Entrez le nom du joueur que vous cherchez</label>
+					<input type=text id="searchInput" class="form-control" ng-model="searchInput" placeholder="Pseudo" />
+				</div>
+			</form>
+		</div>
+	</span>
+	<span class="randomPlayerPanel">
+		<button type="button" class="btn" ng-click="randomAdversary()">Adversaire aléatoire</button>
+	</span>
+</div>
