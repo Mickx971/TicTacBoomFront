@@ -37,6 +37,11 @@ app.config(function ($routeProvider, $httpProvider) {
 		  controller: 'HomeCtrl',
 		  controllerAs: 'home'
 		})
+		.when('/profile', {
+			templateUrl: 'views/profile.html',
+			controller: 'ProfileCtrl',
+			controllerAs: 'profile'
+		})
 		.otherwise({
 			redirectTo: '/home'
 		});

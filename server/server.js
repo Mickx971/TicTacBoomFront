@@ -26,26 +26,6 @@ app.use(session)
 
 // Routes
 
-.get('/login?', function(req, res) {
-    var email = req.query.email;
-    var pwd = req.query.password;
-
-    console.log(email);
-    console.log(pwd);
-
-    var player = playerPool.createPlayer(email);
-    console.log('login');
-    res.json({playerId: player.id});
-})
-
-.get('/logout', function(req, res) {
-    var player = playerPool.getPlayer(req.query.playerId);
-    if(player) {
-        console.log('logout: ' + player.id);
-        gamePool.removePlayer(player.id);
-        playerPool.removePlayer(player);
-    }
-})
 
 .get('/signIn', function(req, res) {
     var email = req.query.email;
@@ -60,8 +40,46 @@ app.use(session)
     res.json({playerId: player.id});
 })
 
+.get('/login?', function(req, res) {
+    var email = req.query.email;
+    var pwd = req.query.password;
+
+    console.log(email);
+    console.log(pwd);
+
+    var player = playerPool.createPlayer(email);
+    player.email = email;
+    console.log('login');
+    res.json({playerId: player.id});
+})
+
+.get('/logout', function(req, res) {
+    var player = playerPool.getPlayer(req.query.playerId);
+    if(player) {
+        console.log('logout: ' + player.id);
+        gamePool.removePlayer(player.id);
+        playerPool.removePlayer(player);
+    }
+})
+
 .get('/players', function(req, res) {
     res.json(playerPool.players.values());
+})
+
+.get('/playerData', function(req, res) {
+    var player = playerPool.getPlayer(req.query.playerId);
+    if(player) {
+        //player.email
+        res.json({
+            games: [
+                {adversary: { name: 'pseudo', life: 0, bullet: 3}, you: { life: 1, bullet: 3}},
+                {adversary: { name: 'pseudo', life: 1, bullet: 3}, you: { life: 0, bullet: 3}},
+                {adversary: { name: 'pseudo', life: 1, bullet: 3}, you: { life: 0, bullet: 3}}
+            ],
+            total: 3,
+            wins: 1
+        });
+    }
 });
 
 

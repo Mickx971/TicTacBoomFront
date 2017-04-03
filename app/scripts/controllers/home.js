@@ -36,6 +36,7 @@ angular.module('ticTacBoomFrontApp')
   		var modal;
 
   		var onResponse = function(accepted) {
+  			console.log('qsdfs');
   			modal.close();
   			data.invitation.answer = accepted;
 			socket.sendMessage('invitationAnswer', data);

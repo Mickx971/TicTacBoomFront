@@ -116,8 +116,8 @@ Game.prototype = {
 	},
 
 	onGameEnded: function(callback) {
-		this.score1 = { life: this.player1.life, bullet: this.player1.bullet };
-		this.score2 = { life: this.player2.life, bullet: this.player2.bullet };
+		this.score1 = { player: this.player1.email, life: this.player1.life, bullet: this.player1.bullet };
+		this.score2 = { player: this.player2.email, life: this.player2.life, bullet: this.player2.bullet };
 
 		this.player1.reset();
 		this.player2.reset();

@@ -1,0 +1,14 @@
+<div>
+	<div>
+		<span class="">Nombre de parties jouées: {{total}}</span>
+		<span class="">Nombre de victoires: {{wins}}</span>
+	</div>
+	<div ng-repeat="game in games">
+		<span class="adversaryName">Adversaire: {{game.adversary.name}}</span>
+		<span class="adversaryLife">vie: {{game.adversary.life}}</span>
+		<span class="adversaryBullet">balles: {{game.adversary.bullet}}</span>
+		<span> -- Vous: </span>
+		<span class="adversaryBullet">vie: {{game.you.life}}</span>
+		<span class="adversaryBullet">balles: {{game.you.bullet}}</span>
+	</div>
+</div>
