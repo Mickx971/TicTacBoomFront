@@ -9,7 +9,7 @@
  */
 
  angular.module('ticTacBoomFrontApp')
-  .factory('socket', function (socketFactory, $cookies, $location, Config) {
+  .factory('socket', function (socketFactory, $rootScope, $cookies, $location, Config) {
     var socket = socketFactory({ioSocket: io.connect(Config.serverBase)});
     socket.sendMessage = function(messageType, message) {
 		if(!message) {
@@ -25,6 +25,9 @@
 	socket.on('gameJoined', function(gameData) {
 		$cookies.put('gameId', gameData.gameId);
 		$location.path('/play');
+	});
+	socket.on('unauthaurized', function() {
+		$rootScope.onConnectionAction();
 	});
 	return socket;
   });

@@ -12,19 +12,21 @@ Invitation.prototype = {
 		
 		this.gamePool.onInvitationAnswered(this);
 
+		var inv = { 
+			id: this.id, 
+			inviting: this.inviting, 
+			invited: this.invited 
+		};
+		
 		if(accepted) {
-			//Utils.sendMessage(inviting, 'invitationAccepted', this);
+			//Utils.sendMessage(inviting, 'invitationAccepted', inv);
 			var game = this.gamePool.createGame();
 			this.gamePool.addGamePlayer(game, this.inviting);
 			this.gamePool.addGamePlayer(game, this.invited);
 			game.notifyReady();
 		}
 		else {
-			Utils.sendMessage(this.inviting, 'invitationRefused', { 
-				id: this.id, 
-				inviting: this.inviting, 
-				invited: this.invited 
-			});	
+			Utils.sendMessage(this.inviting, 'invitationRefused', inv);	
 		}
 	},
 

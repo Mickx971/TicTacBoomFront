@@ -1,6 +1,7 @@
 
-function Player(id, socket) {
+function Player(id, name) {
 	this.id = id;
+	this.name = name;
 	this.sockets = new Set();
 	this.reset();
 	this.playing = false;
@@ -11,6 +12,7 @@ Player.prototype = {
 	getData: function() {
 		return {
 			id: this.id,		
+			name: this.name,
 			life: this.life,
 			bullet: this.bullet,
 			armor: this.armor,

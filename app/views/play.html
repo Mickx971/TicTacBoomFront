@@ -2,7 +2,7 @@
 	<div class="partyName"><p>{{game.name}}<p></div>
 	<div class="gameArea">
 		<div class="adversaries">
-			<p class="playerName">{{game.adversary.id}}</p>
+			<p class="playerName">{{game.adversary.name}}</p>
 			<img class="playerAvatar" ng-src="/images/player.png" width="100" height="100"/>
 			<div class="life">Vie: {{game.adversary.life}}</div>
 			<div class="bullet">Balles: {{game.adversary.bullet}}</div>
@@ -21,7 +21,7 @@
 				<img class="playerAvatar" ng-src="/images/player.png" width="100" height="100"/>
 				<div class="life">Vie: {{game.player.life}}</div> 
 				<div class="bullet">Balles: {{game.player.bullet}}</div>
-				<p class="playerName">{{game.player.id}}</p>
+				<p class="playerName">{{game.player.name}}</p>
 			</div>
 		</div>
 	</div>

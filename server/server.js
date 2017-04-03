@@ -33,7 +33,7 @@ app.use(session)
     console.log(email);
     console.log(pwd);
 
-    var player = playerPool.getOrCreatePlayer();
+    var player = playerPool.createPlayer(email);
     console.log('login');
     res.json({playerId: player.id});
 })
@@ -56,7 +56,7 @@ app.use(session)
     console.log(password);
     console.log(pseudo);
 
-    var player = playerPool.getOrCreatePlayer();
+    var player = playerPool.createPlayer(pseudo);
     res.json({playerId: player.id});
 })
 
@@ -74,7 +74,10 @@ io.on('connection', function(socket) {
             playerPool.addPlayerSocket(player, socket);
             callback(player);
         }
-        else console.log('Unknown user id: ' + userData.id);
+        else {
+            console.log('Unknown user id: ' + userData.id);
+            socket.emit('unauthaurized');
+        }
     };
 
     socket.on('disconnect', function() {
@@ -83,9 +86,15 @@ io.on('connection', function(socket) {
 
     socket.on('play', function(userData) {
         userData = userData || {};
-        var player = playerPool.getOrCreatePlayer(userData.id, socket);
-        socket.emit('setPlayerId', player.id); 
-        console.log('User setted: ' + player.id);       
+        var player = playerPool.getPlayer(userData.id, socket);
+        if(player) {
+            socket.emit('setPlayerId', player.id); 
+            console.log('User setted: ' + player.id);       
+        }
+        else {
+            console.log('Unknown user id: ' + userData.id);
+            socket.emit('unauthaurized');
+        }
     });
 
     socket.on('invitation', function(userData) {
