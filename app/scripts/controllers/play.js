@@ -55,7 +55,7 @@ angular.module('ticTacBoomFrontApp')
 			stopChrono();
 
 			modal = $uibModal.open({
-				animation: true,
+				animation: false,
 				ariaLabelledBy: 'modal-title',
 				ariaDescribedBy: 'modal-body',
 				templateUrl: 'views/replayModal.html',

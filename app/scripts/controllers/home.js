@@ -42,7 +42,7 @@ angular.module('ticTacBoomFrontApp')
   		};
 
   		modal = $uibModal.open({
-			animation: true,
+			animation: false,
 			ariaLabelledBy: 'modal-title',
 			ariaDescribedBy: 'modal-body',
 			templateUrl: 'views/invitationModal.html',

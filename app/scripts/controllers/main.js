@@ -23,7 +23,7 @@ angular.module('ticTacBoomFrontApp')
 			if(!$rootScope.userConnected) {
 
 				var modal = $uibModal.open({
-					animation: true,
+					animation: false,
 					ariaLabelledBy: 'modal-title',
 					ariaDescribedBy: 'modal-body',
 					templateUrl: 'views/loginModal.html',
