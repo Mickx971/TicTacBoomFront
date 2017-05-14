@@ -44,8 +44,6 @@
  				}
  			};
 
- 			console.log('initqmsldkfnqmsldkfq');
-
  			socket.on('gameJoined', function(gameData) {
  				console.log('joined 2');
  				game.id = gameData.gameId;

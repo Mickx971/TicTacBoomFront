@@ -32,22 +32,21 @@ angular.module('ticTacBoomFrontApp')
 			} 
 		};
 
-		var launchChrono = function(roundTime, offset) {
+		var stopChrono = function() {
+			$scope.roundTimer = 0;
+			if($scope.chrono !== undefined) {
+				$interval.cancel($scope.chrono);
+			}
+		};
 
+		var launchChrono = function(roundTime, offset) {
+			stopChrono();
 			$scope.roundTime = roundTime;
 			if(offset) {
-
-				console.log('roundTime ' + roundTime);
-				console.log('offset ' + offset);
-
 				var start = Math.floor((((roundTime * 1000) - offset)/(roundTime * 1000))*100);
 				$scope.roundTimer = start > 0 ? 100 - start : 90;
 			}
 			$scope.chrono = $interval(function() { $scope.updateTimer(); }, roundTime * 10);
-		};
-
-		var stopChrono = function() {
-			$interval.cancel($scope.chrono);
 		};
 
 		$scope.game.setOnGameEndedCallback(function() {

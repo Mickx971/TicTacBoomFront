@@ -33,7 +33,7 @@ Player.prototype = {
 	},
 
 	reset: function() {
-		this.life = 1;
+		this.life = 10;
 		this.bullet = 1;
 		this.armor = 0;
 	},

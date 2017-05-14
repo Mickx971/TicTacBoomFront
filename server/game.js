@@ -89,6 +89,7 @@ Game.prototype = {
 		if(!player.setAction(this.actions.get(actionId))) {
 			console.log('Error: player ' + player.id + ' can not pay action: ' + actionId);
 			console.log('Have: ' + player.getNbBullet() + ' and cost: ' + this.actions.get(actionId).cost);
+			player.setAction(this.actions.get(-1))
 		}
 
 		if(this.player1.havePlayed() && this.player2.havePlayed()) {
